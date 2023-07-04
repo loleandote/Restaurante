@@ -13,29 +13,27 @@ int main(int argc, char *argv[])
 }
 
 /**
- * La función "empaquetador" simula una línea telefónica esperando una llamada para luego redirigirla a un
- * teléfono libre.
+ * La función "empaquetador" es una función que representa un proceso empaquetador, el cual espera
+ * comida, disminuye la cantidad de comida disponible, aumenta la cantidad de paquetes disponibles y
+ * llama al proceso cajero.
  */
 void empaquetador()
 {
     pid_t pid = getpid();
-
+    // Coge semáforos y memoria compartida
+    sem_t *empaquetador = get_sem(EMPAQUETADORES);
+    sem_t *mutexPaquete = get_sem(MUTEXPQUETE);
+    sem_t *mutexComida = get_sem(MUTEXCOMIDA);
+    sem_t *cajero = get_sem(CAJEROS);
+    int valorPaquetes = obtener_var(PAQUETES);
+    int valorComidas = obtener_var(COMIDAS);
     while (1)
     {
-        int valorPaquetes = obtener_var(PAQUETES);
-        int valorComidas = obtener_var(COMIDAS);
         int i = 0;
         int j = 0;
-        // Coge semáforos y memoria compartida
-        sem_t *empaquetador = get_sem(EMPAQUETADORES);
-        sem_t *mutexPaquete = get_sem(MUTEXPQUETE);
-        sem_t *mutexComida = get_sem(MUTEXCOMIDA);
-        sem_t *cajero = get_sem(CAJEROS);
         printf("Empaquetador [%d] esperando comida...\n", pid);
         wait_sem(empaquetador);
-        // Realiza una espera entre 1..60 segundos
-        sleep(rand() % 30 + 1);
-        // Aumenta las llamadas en espera
+        sleep(5);
         wait_sem(mutexComida);
         consultar_var(valorComidas, &i);
         modificar_var(valorComidas, --i);

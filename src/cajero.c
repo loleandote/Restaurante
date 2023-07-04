@@ -12,9 +12,10 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
+
 /**
- * La función "cajero" simula una línea telefónica esperando una llamada para luego redirigirla a un
- * teléfono libre.
+ * La función "cajero" representa a un cajero en un sistema que maneja paquetes, donde el cajero espera
+ * una llamada del empaquetador, lo vende y actualiza el número restante de paquetes.
  */
 void cajero()
 {
@@ -22,16 +23,14 @@ void cajero()
 
     int i = 0;
     // Coge semáforos y memoria compartida
-
+    sem_t *mutex = get_sem(MUTEXPQUETE);
+    sem_t *cajero = get_sem(CAJEROS);
+    int valorPaquetes = obtener_var(PAQUETES);
     while (1)
     {
-        sem_t *mutex = get_sem(MUTEXPQUETE);
-        sem_t *cajero = get_sem(CAJEROS);
-        int valorPaquetes = obtener_var(PAQUETES);
-        // Realiza una espera entre 1..60 segundos
         printf("Cajero [%d] esperando paquete...\n", pid);
         wait_sem(cajero);
-        sleep(rand() % 30 + 1);
+        sleep(5);
         wait_sem(mutex);
         consultar_var(valorPaquetes, &i);
         modificar_var(valorPaquetes, --i);
